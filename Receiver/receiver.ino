@@ -100,7 +100,6 @@ void setup()
   HCPCA9685.Sleep(false);
 }
 
-
 unsigned long lastRecvTime = 0;
 void recvData()
 {
@@ -121,12 +120,12 @@ void loop()
     ResetData(); // Signal lost.. Reset data
   }
 
-  yaw = map(data.yaw, 0, 255, 1000, 2000);  
-  pitch = map(data.pitch, 0, 255, 1000, 2000);   
-  throttle = map(data.throttle, 0, 255, 1000, 2000); 
-  roll = map(data.roll, 0, 255, 1000, 2000);     
-  aux1 = data.aux1;                              
-  aux2 = data.aux2;                              
+  yaw = map(data.yaw, 0, 255, 1000, 2000);
+  pitch = map(data.pitch, 0, 255, 1000, 2000);
+  throttle = map(data.throttle, 0, 255, 1000, 2000);
+  roll = map(data.roll, 0, 255, 1000, 2000);
+  aux1 = data.aux1;
+  aux2 = data.aux2;
 
   HCPCA9685.Servo(0, map(data.throttle, 0, 255, 420, 10));
   HCPCA9685.Servo(1, map(data.yaw, 0, 255, 420, 10));
@@ -140,22 +139,30 @@ void loop()
 
   digitalWrite(6, aux1);
   digitalWrite(7, aux2);
-  //print stuff on lcd
+  // print stuff on lcd
   printtext();
-  //car function
+  // car function
   driveCar();
 }
 
 void driveCar(void)
 {
-  if (throttle > 1600)
+  //reset forward backward to zero
+  if (throttle < 1700 && throttle > 1300)
+  {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, LOW);
+  }else
+  if (throttle > 1700)
   {
     digitalWrite(left1, LOW);
     digitalWrite(left2, HIGH);
     digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
-  }
-  if (throttle < 1400)
+  }else
+   if (throttle < 1300)
   {
     digitalWrite(left1, HIGH);
     digitalWrite(left2, LOW);
@@ -163,36 +170,32 @@ void driveCar(void)
     digitalWrite(right2, HIGH);
   }
 
-  if (roll > 1600)
-  {
-    digitalWrite(left1, LOW);
-    digitalWrite(left2, LOW);
-    digitalWrite(right1, HIGH);
-    digitalWrite(right2, LOW);
-  }
-  if (roll < 1400)
+  if (yaw > 1700)
   {
     digitalWrite(left1, HIGH);
     digitalWrite(left2, LOW);
-    digitalWrite(right1, LOW);
+    digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
+  }else
+  if (yaw < 1300)
+  {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, HIGH);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, HIGH);
   }
 }
-  
+
 void printtext(void)
 {
   display.clearDisplay();
   display.setTextSize(1.2); // Draw 2X-scale text
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
-  String throttle = String(throttle);
-  String yaw = String(yaw);
-  String roll = String(roll);
-  String pitch = String(pitch);
-  display.println("Throttle-" + throttle);
-  display.println("Yaw-" + yaw);
-  display.println("Roll-" + roll);
-  display.println("Pitch-" + pitch);
+  display.println("Throttle-" + String(throttle));
+  display.println("Yaw-" + String(yaw));
+  display.println("Roll-" + String(roll));
+  display.println("Pitch-" + String(pitch));
   display.println("Aux1-" + String(aux1));
   display.println("Aux2-" + String(aux2));
   display.println("Tarun Bhati");
