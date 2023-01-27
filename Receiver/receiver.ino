@@ -148,19 +148,34 @@ void loop()
 
 void driveCar(void)
 {
-  if (throttle > 1500)
+  if (throttle > 1600)
   {
     digitalWrite(left1, LOW);
     digitalWrite(left2, HIGH);
     digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
   }
-  if (throttle < 1500)
+  if (throttle < 1400)
   {
     digitalWrite(left1, HIGH);
     digitalWrite(left2, LOW);
     digitalWrite(right1, LOW);
     digitalWrite(right2, HIGH);
+  }
+
+  if (roll > 1600)
+  {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, HIGH);
+    digitalWrite(right2, LOW);
+  }
+  if (roll < 1400)
+  {
+    digitalWrite(left1, HIGH);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, LOW);
   }
 }
   
