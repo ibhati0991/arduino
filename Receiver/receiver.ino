@@ -170,14 +170,14 @@ void driveCar(void)
     digitalWrite(right2, HIGH);
   }
 
-  if (yaw > 1700)
+  if (roll > 1700)
   {
     digitalWrite(left1, HIGH);
     digitalWrite(left2, LOW);
     digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
   }else
-  if (yaw < 1300)
+  if (roll < 1300)
   {
     digitalWrite(left1, LOW);
     digitalWrite(left2, HIGH);
