@@ -59,8 +59,11 @@ const char index_html[] PROGMEM = R"rawliteral(
         event.preventDefault();
         x = event.touches[0].clientX - joystickContainer.offsetLeft + 175;
         y = event.touches[0].clientY - joystickContainer.offsetTop + 175;
-        joystick.style.left = x + 'px';
-        joystick.style.top = y + 'px';
+       if (x > 115 && x < 235 && y > 115 && y < 235) {
+          joystick.style.left = x + 'px';
+          joystick.style.top = y + 'px';
+          info.innerHTML = `<h3>X:${x} Y:${y}</h3>`;
+        }
         info.innerHTML = `<h3>X:${x} Y:${y}</h3>`;
 
         var xhr = new XMLHttpRequest();
@@ -124,27 +127,31 @@ void setup()
   display.println(WiFi.localIP());
   display.display();
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest * request)
+  {
 
-   int paramsNr = request->params();
+    int paramsNr = request->params();
     Serial.println(paramsNr);
     display.clearDisplay();
     display.setCursor(0, 0);
-    for(int i=0;i<paramsNr;i++){
-        AsyncWebParameter* p = request->getParam(i);
-        Serial.print("Param name: ");
-        Serial.println(p->name());
-        Serial.print("Param value: ");
-        Serial.println(p->value());
-        Serial.println("------");
-         display.println("Param name: ");
+    for (int i = 0; i < paramsNr; i++) {
+      AsyncWebParameter* p = request->getParam(i);
+      Serial.print("Param name: ");
+      Serial.println(p->name());
+      Serial.print("Param value: ");
+      Serial.println(p->value());
+      Serial.println("------");
+      if (p->value().toInt() > 225 ||  p->value().toInt() < 125) {
+        display.println("Param name: ");
         display.println(p->name());
         display.println("Param value: ");
         display.println(p->value());
+        display.display();
+      }
     }
-    display.display();
-    request->send_P(200, "text/html", index_html); });
+
+    request->send_P(200, "text/html", index_html);
+  });
 
   server.begin();
 }
