@@ -96,6 +96,9 @@ AsyncWebServer server(80);
 #define right1 14
 #define right2 27
 
+int posX;
+int posY;
+
 void setup()
 {
   Serial.begin(115200);
@@ -122,34 +125,12 @@ void setup()
     display.display();
   }
 
-  display.clearDisplay();
-  display.println("Connected to WiFi");
-  display.println(WiFi.localIP());
-  display.display();
-
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request)
   {
-
-    int paramsNr = request->params();
-    Serial.println(paramsNr);
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    for (int i = 0; i < paramsNr; i++) {
-      AsyncWebParameter* p = request->getParam(i);
-      Serial.print("Param name: ");
-      Serial.println(p->name());
-      Serial.print("Param value: ");
-      Serial.println(p->value());
-      Serial.println("------");
-      if (p->value().toInt() > 225 ||  p->value().toInt() < 125) {
-        display.println("Param name: ");
-        display.println(p->name());
-        display.println("Param value: ");
-        display.println(p->value());
-        display.display();
-      }
+    if (request->hasParam("posX") && request->hasParam("posY")) {
+      posX = request->getParam("posX")->value().toInt();
+      posY = request->getParam("posY")->value().toInt();
     }
-
     request->send_P(200, "text/html", index_html);
   });
 
@@ -158,5 +139,58 @@ void setup()
 
 void loop()
 {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("Connected to WiFi");
+  display.println(WiFi.localIP());
+  display.println("");
+  display.println("Position X: " + String(posX));
+  display.println("Position Y: " + String(posY));
+  //  display.println(posX);
+  //  display.println(posY);
+  display.println("");
+  display.println("Tarun Bhati");
+  display.println("ibhati0991@gmail.com");
+  display.display();
   // Your server code here
+  Serial.println(posX);
+  Serial.println(posY);
+
+  if (posY < 130)
+  {
+    digitalWrite(left1, HIGH);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, HIGH);
+
+  } else if (posY > 215)
+  {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, HIGH);
+    digitalWrite(right1, HIGH);
+    digitalWrite(right2, LOW);
+  }
+
+  if (posX < 130)
+  {
+    digitalWrite(left1, HIGH);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, HIGH);
+    digitalWrite(right2, LOW);
+  } else if (posX > 215)
+  {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, HIGH);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, HIGH);
+  }
+
+  if (posX == 0 && posY == 0) {
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, LOW);
+  }
 }
