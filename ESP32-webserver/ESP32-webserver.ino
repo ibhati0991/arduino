@@ -2,9 +2,12 @@
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <ESPAsyncWebServer.h>
+
+
 Adafruit_SSD1306 display(128, 64, &Wire);
-const char *ssid = "FTTH";
-const char *password = "12345678";
+
+const char *ssid = "Tarun-FTTH";
+const char *password = "Guh97924";
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
